@@ -23,25 +23,29 @@ export default class Game {
   }
 
   switchTurn() {
-    if (this.currentPlayer === this.player) {
-      this.currentPlayer = this.computer;
-    } else {
-      this.currentPlayer = this.player;
-    }
+    this.currentPlayer = this.currentPlayer === this.player ? this.computer : this.player;
   }
 
   playRound(x, y) {
     const opponent = this.currentPlayer === this.player ? this.computer : this.player;
     const result = this.currentPlayer.makeMove(opponent, x, y);
     
-    // If the move was a hit, the player gets an extra turn
-    if (result === 'hit') {
-      // Do not switch turn
-      if (this.checkGameOver()) {
-        alert('Game Over');
-      }
-    } else {
-      // Switch turn only if it was a miss
+    if (result === 'hit' && this.checkGameOver()) {
+      alert('Game Over');
+    } else if (result !== 'hit') {
+      this.switchTurn();
+    }
+
+    return result;
+  }
+
+  computerMove() {
+    const opponent = this.player;
+    const result = this.computer.makeMove(opponent);
+    
+    if (result === 'hit' && this.checkGameOver()) {
+      alert('Game Over');
+    } else if (result !== 'hit') {
       this.switchTurn();
     }
 

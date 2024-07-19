@@ -29,16 +29,24 @@ function renderBoard(gameboard, container, isPlayer = false) {
 
 function setupEventListeners(game, playerContainer, computerContainer) {
   computerContainer.addEventListener('click', (event) => {
+    if (game.currentPlayer !== game.player) return; // Prevent player from clicking out of turn
     const x = parseInt(event.target.dataset.x);
     const y = parseInt(event.target.dataset.y);
     if (!isNaN(x) && !isNaN(y)) {
       const result = game.playRound(x, y);
       renderBoards(game, playerContainer, computerContainer);
 
-      if (result === 'hit') {
-        if (game.checkGameOver()) {
-          alert('Game Over');
-        }
+      if (result === 'hit' && game.checkGameOver()) {
+        alert('Game Over');
+      } else if (result !== 'hit') {
+        setTimeout(() => {
+          const computerMove = game.computerMove();
+          renderBoards(game, playerContainer, computerContainer);
+
+          if (game.checkGameOver()) {
+            alert('Game Over');
+          }
+        }, 1000); // Delay for 1 second before computer's turn
       }
     }
   });
@@ -51,14 +59,11 @@ function renderBoards(game, playerContainer, computerContainer) {
 
 export default function initializeGame() {
   const game = new Game();
-  const playerContainer = document.createElement('div');
-  const computerContainer = document.createElement('div');
+  const playerContainer = document.getElementById('player-board');
+  const computerContainer = document.getElementById('computer-board');
 
   playerContainer.classList.add('board');
   computerContainer.classList.add('board');
-
-  document.getElementById('game-container').appendChild(playerContainer);
-  document.getElementById('game-container').appendChild(computerContainer);
 
   renderBoards(game, playerContainer, computerContainer);
   setupEventListeners(game, playerContainer, computerContainer);

@@ -4,11 +4,10 @@ describe('Ship', () => {
   let ship;
 
   beforeEach(() => {
-    ship = new Ship('Battleship', 4);
+    ship = new Ship(4); // Updated to match the current Ship class constructor
   });
 
-  test('should initialize with correct name and length', () => {
-    expect(ship.name).toBe('Battleship');
+  test('should initialize with correct length', () => {
     expect(ship.length).toBe(4);
     expect(ship.hits).toBe(0);
   });
