@@ -1,0 +1,29 @@
+.board {
+    display: grid;
+    grid-template-columns: repeat(10, 30px);
+    grid-gap: 1px;
+  }
+  
+  .cell {
+    width: 30px;
+    height: 30px;
+    background-color: lightblue;
+    border: 1px solid black;
+  }
+  
+  .cell.ship {
+    background-color: gray;
+  }
+  
+  .cell.hit {
+    background-color: red;
+  }
+  
+  .cell.miss {
+    background-color: white;
+  }
+  
+  .cell.hit-ship {
+    background-color: darkred;
+  }
+  
