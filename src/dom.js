@@ -30,8 +30,10 @@ function renderBoard(gameboard, container, isPlayer = false) {
 function setupEventListeners(game, playerContainer, computerContainer) {
   computerContainer.addEventListener('click', (event) => {
     if (game.currentPlayer !== game.player) return; // Prevent player from clicking out of turn
+
     const x = parseInt(event.target.dataset.x);
     const y = parseInt(event.target.dataset.y);
+
     if (!isNaN(x) && !isNaN(y)) {
       const result = game.playRound(x, y);
       renderBoards(game, playerContainer, computerContainer);
@@ -39,17 +41,30 @@ function setupEventListeners(game, playerContainer, computerContainer) {
       if (result === 'hit' && game.checkGameOver()) {
         alert('Game Over');
       } else if (result !== 'hit') {
-        setTimeout(() => {
-          const computerMove = game.computerMove();
-          renderBoards(game, playerContainer, computerContainer);
-
-          if (game.checkGameOver()) {
-            alert('Game Over');
-          }
-        }, 1000); // Delay for 1 second before computer's turn
+        // Computer's turn if player's move was a miss
+        computerMove(game, playerContainer, computerContainer);
       }
     }
   });
+}
+
+function computerMove(game, playerContainer, computerContainer) {
+  if (game.currentPlayer !== game.computer) return; // Ensure it's the computer's turn
+
+  setTimeout(() => {
+    const result = game.computerMove();
+    renderBoards(game, playerContainer, computerContainer);
+
+    if (result === 'hit' && !game.checkGameOver()) {
+      // If the computer hits, it gets another turn
+      computerMove(game, playerContainer, computerContainer);
+    } else if (result === 'miss') {
+      // If the computer misses, switch turn
+      game.switchTurn();
+    } else if (game.checkGameOver()) {
+      alert('Game Over');
+    }
+  }, 1000); // Delay for 1 second before computer's turn
 }
 
 function renderBoards(game, playerContainer, computerContainer) {
