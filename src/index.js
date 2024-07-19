@@ -1,3 +1,4 @@
+// index.js
 import initializeGame from './dom';
 import './style.css';
 

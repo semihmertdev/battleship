@@ -8,8 +8,22 @@
 <body>
   <div id="game-container">
     <h1>Battleship Game</h1>
-    <div id="player-board"></div>
-    <div id="computer-board"></div>
+    <div id="controls">
+      <button id="randomize-ships">Randomize Ships</button>
+      <button id="start-game">Start Game</button>
+      <button id="reset-game">Reset Game</button> 
+    </div>
+    <div id="ship-container">
+      <div class="ship" draggable="true" data-length="5">Carrier</div>
+      <div class="ship" draggable="true" data-length="4">Battleship</div>
+      <div class="ship" draggable="true" data-length="3">Cruiser</div>
+      <div class="ship" draggable="true" data-length="3">Submarine</div>
+      <div class="ship" draggable="true" data-length="2">Destroyer</div>
+    </div>
+    <div class="game-board">
+      <div id="player-board"></div>
+      <div id="computer-board"></div>
+    </div>
   </div>
 </body>
 </html>

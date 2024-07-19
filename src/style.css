@@ -1,29 +1,119 @@
+/* style.css */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f0f0;
+}
+
+#game-container {
+  text-align: center;
+  width: 60vw;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+#controls {
+  margin-bottom: 20px;
+}
+
+#controls button {
+  padding: 10px 20px;
+  margin: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#ship-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  gap: 20px;
+}
+
+.ship {
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  cursor: grab;
+  user-select: none;
+  text-align: center;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+.ship:hover {
+  background-color: #0056b3;
+}
+
+.ship[data-length="5"] {
+  width: calc(40px * 5);
+}
+
+.ship[data-length="4"] {
+  width: calc(40px * 4);
+}
+
+.ship[data-length="3"] {
+  width: calc(40px * 3);
+}
+
+.ship[data-length="2"] {
+  width: calc(40px * 2);
+}
+
+#player-board,
+#computer-board {
+  display: grid;
+  grid-template-columns: repeat(10, 40px);
+  grid-gap: 2px;
+  margin: 0 auto;
+}
+
+.cell {
+  width: 40px;
+  height: 40px;
+  background-color: #e0e0e0;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.cell.ship {
+  background-color: #007bff;
+}
+
+.cell.hit-ship {
+  background-color: #dc3545;
+}
+
+.cell.miss {
+  background-color: #6c757d;
+}
+
 .board {
-    display: grid;
-    grid-template-columns: repeat(10, 30px);
-    grid-gap: 1px;
-  }
-  
-  .cell {
-    width: 30px;
-    height: 30px;
-    background-color: lightblue;
-    border: 1px solid black;
-  }
-  
-  .cell.ship {
-    background-color: gray;
-  }
-  
-  .cell.hit {
-    background-color: red;
-  }
-  
-  .cell.miss {
-    background-color: white;
-  }
-  
-  .cell.hit-ship {
-    background-color: darkred;
-  }
-  
+  display: inline-block;
+  border: 2px solid #000;
+  background-color: #fff;
+}
+
+#computer-board {
+  opacity: 0.5;
+}
+
+#computer-board .cell {
+  cursor: pointer;
+}
+
+#computer-board .cell.ship {
+  background-color: transparent;
+}
+
+.game-board {
+  display: flex;
+}

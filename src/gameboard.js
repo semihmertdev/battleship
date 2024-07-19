@@ -25,6 +25,26 @@ export default class Gameboard {
     }
   }
 
+  randomizeShips() {
+    this.board = Array(10).fill(null).map(() => Array(10).fill(null)); // Clear the board
+    this.ships = [];
+    const ships = [5, 4, 3, 3, 2]; // Ship lengths
+    ships.forEach(length => {
+      let placed = false;
+      while (!placed) {
+        const x = Math.floor(Math.random() * 10);
+        const y = Math.floor(Math.random() * 10);
+        const horizontal = Math.random() < 0.5;
+        try {
+          this.placeShip(x, y, length, horizontal);
+          placed = true;
+        } catch (error) {
+          // Retry placing the ship
+        }
+      }
+    });
+  }
+
   isValidPlacement(x, y, length, horizontal) {
     if (horizontal) {
       if (y + length > 10) return false;
@@ -42,16 +62,16 @@ export default class Gameboard {
 
   receiveAttack(x, y) {
     const target = this.board[x][y];
-    if (target) {
+    if (target instanceof Ship) {
       target.hit();
-      this.board[x][y] = { ...target, isHit: true }; // Update cell to indicate it was hit
+      this.board[x][y] = { ...target, isHit: true }; // Ensure isHit is true
       return 'hit';
     } else {
       this.missedShots.push([x, y]);
       return 'miss';
     }
   }
-
+  
   allShipsSunk() {
     return this.ships.every(ship => ship.isSunk());
   }

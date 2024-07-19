@@ -10,16 +10,13 @@ function renderBoard(gameboard, container, isPlayer = false) {
       cellDiv.dataset.x = x;
       cellDiv.dataset.y = y;
 
-      if (isPlayer && cell && !cell.isHit) {
-        cellDiv.classList.add('ship');
-      }
-
-      if (gameboard.missedShots.some(shot => shot[0] === x && shot[1] === y)) {
-        cellDiv.classList.add('miss');
-      }
-
+      // Check if cell has been hit
       if (cell && cell.isHit) {
         cellDiv.classList.add('hit-ship');
+      } else if (gameboard.missedShots.some(shot => shot[0] === x && shot[1] === y)) {
+        cellDiv.classList.add('miss');
+      } else if (isPlayer && cell) {
+        cellDiv.classList.add('ship');
       }
 
       container.appendChild(cellDiv);
@@ -27,14 +24,20 @@ function renderBoard(gameboard, container, isPlayer = false) {
   });
 }
 
+
 function setupEventListeners(game, playerContainer, computerContainer) {
   computerContainer.addEventListener('click', (event) => {
-    if (game.currentPlayer !== game.player) return; // Prevent player from clicking out of turn
+    if (game.currentPlayer !== game.player || game.isPlacingShips) return; // Prevent player from clicking out of turn or during ship placement
 
     const x = parseInt(event.target.dataset.x);
     const y = parseInt(event.target.dataset.y);
 
     if (!isNaN(x) && !isNaN(y)) {
+      // Check if the clicked cell is already hit or missed
+      if (event.target.classList.contains('hit-ship') || event.target.classList.contains('miss')) {
+        return; // Do nothing if cell is already hit or missed
+      }
+
       const result = game.playRound(x, y);
       renderBoards(game, playerContainer, computerContainer);
 
@@ -46,7 +49,34 @@ function setupEventListeners(game, playerContainer, computerContainer) {
       }
     }
   });
+
+  const ships = document.querySelectorAll('.ship');
+  ships.forEach(ship => {
+    ship.addEventListener('dragstart', (event) => {
+      event.dataTransfer.setData('text/plain', event.target.dataset.length);
+    });
+  });
+
+  playerContainer.addEventListener('dragover', (event) => {
+    event.preventDefault();
+  });
+
+  playerContainer.addEventListener('drop', (event) => {
+    const length = parseInt(event.dataTransfer.getData('text/plain'));
+    const x = parseInt(event.target.dataset.x);
+    const y = parseInt(event.target.dataset.y);
+
+    if (!isNaN(x) && !isNaN(y)) {
+      try {
+        game.player.gameboard.placeShip(x, y, length);
+        renderBoards(game, playerContainer, computerContainer);
+      } catch (error) {
+        alert('Invalid placement');
+      }
+    }
+  });
 }
+
 
 function computerMove(game, playerContainer, computerContainer) {
   if (game.currentPlayer !== game.computer) return; // Ensure it's the computer's turn
@@ -83,5 +113,16 @@ export default function initializeGame() {
   renderBoards(game, playerContainer, computerContainer);
   setupEventListeners(game, playerContainer, computerContainer);
 
+  document.getElementById('randomize-ships').addEventListener('click', () => {
+    game.player.gameboard.randomizeShips();
+    renderBoards(game, playerContainer, computerContainer);
+  });
+
+  document.getElementById('start-game').addEventListener('click', () => {
+    game.isPlacingShips = false;
+    alert('Game Started');
+  });
+
+  game.isPlacingShips = true; // Allow placing ships initially
   return game;
 }

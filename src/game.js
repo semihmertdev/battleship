@@ -5,42 +5,25 @@ export default class Game {
     this.player = new Player();
     this.computer = new Player(true);
     this.currentPlayer = this.player;
+    this.isPlacingShips = true; // New flag to check if ships are being placed
     this.setupBoards();
   }
 
   setupBoards() {
-    this.player.gameboard.placeShip(0, 0, 5); // Carrier
-    this.player.gameboard.placeShip(2, 2, 4); // Battleship
-    this.player.gameboard.placeShip(4, 4, 3); // Cruiser
-    this.player.gameboard.placeShip(6, 6, 3); // Submarine
-    this.player.gameboard.placeShip(8, 8, 2); // Destroyer
-
-    this.computer.gameboard.placeShip(0, 0, 5); // Carrier
-    this.computer.gameboard.placeShip(2, 2, 4); // Battleship
-    this.computer.gameboard.placeShip(4, 4, 3); // Cruiser
-    this.computer.gameboard.placeShip(6, 6, 3); // Submarine
-    this.computer.gameboard.placeShip(8, 8, 2); // Destroyer
+    this.computer.gameboard.randomizeShips(); // Randomize computer ships
   }
 
   switchTurn() {
-    if (this.currentPlayer === this.player) {
-      this.currentPlayer = this.computer;
-    } else {
-      this.currentPlayer = this.player;
-    }
+    this.currentPlayer = this.currentPlayer === this.player ? this.computer : this.player;
   }
 
   playRound(x, y) {
     const opponent = this.currentPlayer === this.player ? this.computer : this.player;
     const result = this.currentPlayer.makeMove(opponent, x, y);
-    
-    // If the move was a hit, the player gets an extra turn
-    if (result === 'hit') {
-      if (this.checkGameOver()) {
-        alert('Game Over');
-      }
-    } else {
-      // Switch turn only if it was a miss
+
+    if (result === 'hit' && this.checkGameOver()) {
+      alert('Game Over');
+    } else if (result !== 'hit') {
       this.switchTurn();
     }
 
