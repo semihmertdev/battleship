@@ -8,6 +8,10 @@ export default class Gameboard {
   }
 
   placeShip(x, y, length, horizontal = true) {
+    if (this.ships.length >= 5) {
+      throw new Error('Maximum of 5 ships allowed');
+    }
+
     const ship = new Ship(length);
     if (this.isValidPlacement(x, y, length, horizontal)) {
       if (horizontal) {
