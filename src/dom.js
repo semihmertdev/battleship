@@ -102,6 +102,11 @@ function renderBoards(game, playerContainer, computerContainer) {
   renderBoard(game.computer.gameboard, computerContainer);
 }
 
+function hasShipsPlaced(game) {
+  // Check if any ship is placed on the player's gameboard
+  return game.player.gameboard.ships.length > 0;
+}
+
 export default function initializeGame() {
   const game = new Game();
   const playerContainer = document.getElementById('player-board');
@@ -119,6 +124,11 @@ export default function initializeGame() {
   });
 
   document.getElementById('start-game').addEventListener('click', () => {
+    if (!hasShipsPlaced(game)) {
+      alert('Please place all ships before starting the game.');
+      return;
+    }
+
     game.isPlacingShips = false;
     alert('Game Started');
   });
