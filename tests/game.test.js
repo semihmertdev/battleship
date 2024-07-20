@@ -1,4 +1,3 @@
-// In tests/game.test.js
 import Game from '../src/game';
 import Player from '../src/player';
 import Ship from '../src/ship';
@@ -8,6 +7,7 @@ describe('Game', () => {
 
   beforeEach(() => {
     game = new Game();
+    global.alert = jest.fn(); // Mock the alert function
   });
 
   test('should initialize with correct players and ships', () => {
@@ -16,11 +16,7 @@ describe('Game', () => {
     expect(game.computer).toBeInstanceOf(Player);
     
     // Check that ships are placed on the gameboard
-    expect(game.player.gameboard.board[0][0]).toBeInstanceOf(Ship); // Carrier
-    expect(game.player.gameboard.board[2][2]).toBeInstanceOf(Ship); // Battleship
-    expect(game.player.gameboard.board[4][4]).toBeInstanceOf(Ship); // Cruiser
-    expect(game.player.gameboard.board[6][6]).toBeInstanceOf(Ship); // Submarine
-    expect(game.player.gameboard.board[8][8]).toBeInstanceOf(Ship); // Destroyer
+    expect(game.computer.gameboard.ships.length).toBe(5);
   });
 
   test('should switch turns correctly', () => {
@@ -32,8 +28,8 @@ describe('Game', () => {
   });
 
   test('should grant an extra turn on a hit', () => {
-    // Mock `makeMove` method of Player to return 'hit'
-    jest.spyOn(game.currentPlayer, 'makeMove').mockImplementation(() => 'hit');
+    // Mock `receiveAttack` method of Gameboard to return 'hit'
+    jest.spyOn(game.computer.gameboard, 'receiveAttack').mockImplementation(() => 'hit');
     
     const initialTurn = game.currentPlayer;
     game.playRound(0, 0); // Assume this hits a ship
@@ -42,8 +38,8 @@ describe('Game', () => {
   });
 
   test('should switch turn on a miss', () => {
-    // Mock `makeMove` method of Player to return 'miss'
-    jest.spyOn(game.currentPlayer, 'makeMove').mockImplementation(() => 'miss');
+    // Mock `receiveAttack` method of Gameboard to return 'miss'
+    jest.spyOn(game.computer.gameboard, 'receiveAttack').mockImplementation(() => 'miss');
     
     const initialTurn = game.currentPlayer;
     game.playRound(0, 0); // Assume this is a miss

@@ -19,13 +19,13 @@ describe('Gameboard', () => {
   });
 
   test('should throw error for invalid ship placement', () => {
-    expect(() => gameboard.placeShip(0, 7, 5)).toThrow('Invalid placement'); // Horizontal, but extends beyond the board
-    expect(() => gameboard.placeShip(7, 0, 5, false)).toThrow('Invalid placement'); // Vertical, but extends beyond the board
+    expect(() => gameboard.placeShip(0, 7, 5)).toThrow('Invalid ship placement'); // Horizontal, but extends beyond the board
+    expect(() => gameboard.placeShip(7, 0, 5, false)).toThrow('Invalid ship placement'); // Vertical, but extends beyond the board
   });
 
   test('should handle ship placement conflicts', () => {
     gameboard.placeShip(0, 0, 3);
-    expect(() => gameboard.placeShip(0, 1, 3)).toThrow('Invalid placement'); // Overlaps existing ship
+    expect(() => gameboard.placeShip(0, 1, 3)).toThrow('Invalid ship placement'); // Overlaps existing ship
   });
 
   test('should receive attack and register hit', () => {
