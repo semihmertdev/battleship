@@ -24,7 +24,6 @@ function renderBoard(gameboard, container, isPlayer = false) {
   });
 }
 
-
 function setupEventListeners(game, playerContainer, computerContainer) {
   computerContainer.addEventListener('click', (event) => {
     if (game.currentPlayer !== game.player || game.isPlacingShips) return; // Prevent player from clicking out of turn or during ship placement
@@ -77,12 +76,11 @@ function setupEventListeners(game, playerContainer, computerContainer) {
   });
 }
 
-
 function computerMove(game, playerContainer, computerContainer) {
   if (game.currentPlayer !== game.computer) return; // Ensure it's the computer's turn
 
   setTimeout(() => {
-    const result = game.computerMove();
+    const result = game.computer.makeMove(game.player);
     renderBoards(game, playerContainer, computerContainer);
 
     if (result === 'hit' && !game.checkGameOver()) {

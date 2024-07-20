@@ -25,40 +25,20 @@ export default class Gameboard {
       }
       this.ships.push(ship);
     } else {
-      throw new Error('Invalid placement');
+      throw new Error('Invalid ship placement');
     }
-  }
-
-  randomizeShips() {
-    this.board = Array(10).fill(null).map(() => Array(10).fill(null)); // Clear the board
-    this.ships = [];
-    const ships = [5, 4, 3, 3, 2]; // Ship lengths
-    ships.forEach(length => {
-      let placed = false;
-      while (!placed) {
-        const x = Math.floor(Math.random() * 10);
-        const y = Math.floor(Math.random() * 10);
-        const horizontal = Math.random() < 0.5;
-        try {
-          this.placeShip(x, y, length, horizontal);
-          placed = true;
-        } catch (error) {
-          // Retry placing the ship
-        }
-      }
-    });
   }
 
   isValidPlacement(x, y, length, horizontal) {
     if (horizontal) {
       if (y + length > 10) return false;
       for (let i = 0; i < length; i++) {
-        if (this.board[x][y + i]) return false;
+        if (this.board[x][y + i] !== null) return false;
       }
     } else {
       if (x + length > 10) return false;
       for (let i = 0; i < length; i++) {
-        if (this.board[x + i][y]) return false;
+        if (this.board[x + i][y] !== null) return false;
       }
     }
     return true;
@@ -66,17 +46,37 @@ export default class Gameboard {
 
   receiveAttack(x, y) {
     const target = this.board[x][y];
-    if (target instanceof Ship) {
+    if (target) {
       target.hit();
-      this.board[x][y] = { ...target, isHit: true }; // Ensure isHit is true
+      this.board[x][y] = { ...target, isHit: true };
       return 'hit';
     } else {
       this.missedShots.push([x, y]);
       return 'miss';
     }
   }
-  
+
   allShipsSunk() {
     return this.ships.every(ship => ship.isSunk());
+  }
+
+  randomizeShips() {
+    this.ships = [];
+    this.board = Array(10).fill(null).map(() => Array(10).fill(null));
+    const shipLengths = [5, 4, 3, 3, 2];
+    shipLengths.forEach(length => {
+      let placed = false;
+      while (!placed) {
+        const x = Math.floor(Math.random() * 10);
+        const y = Math.floor(Math.random() * 10);
+        const horizontal = Math.random() >= 0.5;
+        try {
+          this.placeShip(x, y, length, horizontal);
+          placed = true;
+        } catch (error) {
+          // Retry placement
+        }
+      }
+    });
   }
 }

@@ -2,85 +2,93 @@ import Gameboard from './gameboard';
 
 export default class Player {
   constructor(isComputer = false) {
-    this.gameboard = new Gameboard();
     this.isComputer = isComputer;
-    this.lastHit = null; // To track the last hit coordinates
-    this.lastDirection = null; // To track the direction of the hit
-    this.previousMoves = new Set(); // To keep track of all previous moves
+    this.gameboard = new Gameboard();
+    this.lastHit = null; // Store the last hit coordinates
+    this.lastDirection = null; // Store the last direction tried
   }
 
-  getRandomCoordinates() {
+  makeMove(opponent, x, y) {
+    if (this.isComputer) {
+      return this.computerMove(opponent);
+    } else {
+      return opponent.gameboard.receiveAttack(x, y);
+    }
+  }
+
+  computerMove(opponent) {
     let x, y;
+
+    if (this.lastHit) {
+      ({ x, y } = this.continueInDirection(opponent));
+    } else {
+      ({ x, y } = this.getRandomCoordinates(opponent));
+    }
+
+    const result = opponent.gameboard.receiveAttack(x, y);
+
+    if (result === 'hit') {
+      this.lastHit = { x, y };
+      this.updateDirection();
+    } else if (result === 'miss' && this.lastDirection) {
+      this.resetDirection();
+    }
+
+    return result;
+  }
+
+  getRandomCoordinates(opponent) {
+    let x, y, isValid;
+
     do {
       x = Math.floor(Math.random() * 10);
       y = Math.floor(Math.random() * 10);
-    } while (this.previousMoves.has(`${x},${y}`));
-    this.previousMoves.add(`${x},${y}`);
-    return [x, y];
+      isValid = !opponent.gameboard.board[x][y]?.isHit && !opponent.gameboard.missedShots.some(shot => shot[0] === x && shot[1] === y);
+    } while (!isValid);
+
+    return { x, y };
   }
 
-  getAdjacentCoordinates(x, y) {
-    const adjacent = [
-      [x - 1, y], // Up
-      [x + 1, y], // Down
-      [x, y - 1], // Left
-      [x, y + 1]  // Right
-    ];
-    return adjacent.filter(([adjX, adjY]) => adjX >= 0 && adjX < 10 && adjY >= 0 && adjY < 10);
-  }
+  continueInDirection(opponent) {
+    let x = this.lastHit.x;
+    let y = this.lastHit.y;
 
-  continueInDirection(x, y, direction) {
-    const directions = {
-      horizontal: [[x, y - 1], [x, y + 1]],
-      vertical: [[x - 1, y], [x + 1, y]]
-    };
-    return directions[direction].find(([adjX, adjY]) => !this.previousMoves.has(`${adjX},${adjY}`) && adjX >= 0 && adjX < 10 && adjY >= 0 && adjY < 10);
-  }
-
-  makeMove(opponent, x = null, y = null) {
-    if (this.isComputer) {
-      let coordinates;
-
-      if (this.lastHit) {
-        const [lastX, lastY] = this.lastHit;
-
-        if (this.lastDirection) {
-          // Continue in the last known direction
-          coordinates = this.continueInDirection(lastX, lastY, this.lastDirection);
-        }
-
-        // If no valid coordinates in the direction, try adjacent cells
-        if (!coordinates) {
-          coordinates = this.getAdjacentCoordinates(lastX, lastY)
-            .find(([adjX, adjY]) => !this.previousMoves.has(`${adjX},${adjY}`));
-          if (coordinates) {
-            // Determine the new direction based on this move
-            this.lastDirection = Math.abs(coordinates[0] - lastX) > 0 ? 'vertical' : 'horizontal';
-          }
-        }
-      }
-
-      if (!coordinates) {
-        coordinates = this.getRandomCoordinates();
-        this.lastDirection = null; // Reset direction if random move
-      }
-
-      this.previousMoves.add(`${coordinates[0]},${coordinates[1]}`);
-      const result = opponent.gameboard.receiveAttack(coordinates[0], coordinates[1]);
-
-      // Update lastHit and lastDirection if it's a hit
-      if (result === 'hit') {
-        this.lastHit = coordinates;
-        this.lastDirection = this.lastDirection || (Math.abs(coordinates[0] - this.lastHit[0]) > 0 ? 'vertical' : 'horizontal');
-      } else {
-        this.lastHit = null; // Reset lastHit if it's a miss
-        this.lastDirection = null; // Reset direction on miss
-      }
-
-      return result;
-    } else {
-      // Player move logic for human players (e.g., from UI interactions)
-      return opponent.gameboard.receiveAttack(x, y);
+    switch (this.lastDirection) {
+      case 'up':
+        x--;
+        break;
+      case 'down':
+        x++;
+        break;
+      case 'left':
+        y--;
+        break;
+      case 'right':
+        y++;
+        break;
+      default:
+        return this.getRandomCoordinates(opponent);
     }
+
+    if (this.isValidCoordinate(x, y, opponent)) {
+      return { x, y };
+    } else {
+      this.resetDirection();
+      return this.getRandomCoordinates(opponent);
+    }
+  }
+
+  updateDirection() {
+    const directions = ['up', 'down', 'left', 'right'];
+    const lastDirectionIndex = directions.indexOf(this.lastDirection);
+    this.lastDirection = directions[(lastDirectionIndex + 1) % directions.length];
+  }
+
+  resetDirection() {
+    this.lastDirection = null;
+  }
+
+  isValidCoordinate(x, y, opponent) {
+    return x >= 0 && x < 10 && y >= 0 && y < 10 && !opponent.gameboard.board[x][y]?.isHit && !opponent.gameboard.missedShots.some(shot => shot[0] === x && shot[1] === y);
   }
 }
