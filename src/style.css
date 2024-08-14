@@ -130,23 +130,21 @@ h1 {
     height: 100vh;
     justify-content: flex-start;
     align-items: center;
-    
   }
 
   .game-board{
     display: flex;
     flex-direction: column;
-    gap: 1px;
   }
 
   #player-board,
   #computer-board {
-    grid-template-columns: repeat(10, 40px); /* Further reduce grid size */
+    grid-template-columns: repeat(10, 30px); /* Further reduce grid size */
     width: 99%;
   }
   
   .cell{
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
   }
 }
