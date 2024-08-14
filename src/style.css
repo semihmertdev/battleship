@@ -129,49 +129,24 @@ h1 {
     flex-direction: column;
     height: 100vh;
     justify-content: flex-start;
+    align-items: center;
+    
   }
 
   .game-board{
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 1px;
   }
 
   #player-board,
   #computer-board {
-    grid-template-columns: repeat(10, 20px); /* Further reduce grid size */
-    width: 98%;
+    grid-template-columns: repeat(10, 40px); /* Further reduce grid size */
+    width: 99%;
   }
   
   .cell{
-    width: 20px;
-    height: 20px;
-  }
-}
-
-
-@media (max-width: 738px){
-  #game-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    justify-content: flex-start;
-  }
-
-  .game-board{
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-
-  #player-board,
-  #computer-board {
-    grid-template-columns: repeat(10, 20px); /* Further reduce grid size */
-    width: 98%;
-  }
-  
-  .cell{
-    width: 20px;
-    height: 20px;
+    width: 40px;
+    height: 40px;
   }
 }
