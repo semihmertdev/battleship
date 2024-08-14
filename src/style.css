@@ -121,28 +121,57 @@ h1 {
   flex-wrap: wrap; /* Wrap boards in smaller viewports */
 }
 
-/* Responsive Styles */
-@media (max-width: 768px) {
+
+@media (max-width: 480px) {
+
   #game-container {
-    width: 100vw; /* Full width on smaller screens */
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: flex-start;
+  }
+
+  .game-board{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
   }
 
   #player-board,
   #computer-board {
-    grid-template-columns: repeat(5, 30px); /* Smaller grid on small screens */
+    grid-template-columns: repeat(10, 20px); /* Further reduce grid size */
+    width: 98%;
+  }
+  
+  .cell{
+    width: 20px;
+    height: 20px;
+  }
+}
+
+
+@media (max-width: 738px){
+  #game-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: flex-start;
   }
 
-  .cell {
-    width: 25px; /* Smaller cells for small screens */
-    height: 25px;
+  .game-board{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  #player-board,
+  #computer-board {
+    grid-template-columns: repeat(10, 20px); /* Further reduce grid size */
+    width: 98%;
   }
   
-  #controls button {
-    padding: 8px 16px; /* Adjust button padding */
-    font-size: 14px; /* Adjust button font size */
-  }
-  
-  #ship-container {
-    flex-direction: column; /* Stack ships vertically */
+  .cell{
+    width: 20px;
+    height: 20px;
   }
 }
